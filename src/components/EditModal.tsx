@@ -34,11 +34,11 @@ const EditModal = ({currentPost}: IEditModalProps) =>  {
       
         const allPosts = posts.map((publication) => {
           if (publication.id === post.id) {
-              return post
+            setSinglePost(post)
+            return post
           }
           return publication
         }) 
-        console.log(allPosts)
         
         setPosts(allPosts) 
     }
@@ -47,10 +47,10 @@ const EditModal = ({currentPost}: IEditModalProps) =>  {
         <>
         <Button sx={{ marginLeft: "-15px", marginBottom: "10px", maxWidth: "70px", width: "70px" }} variant="contained" color="primary" onClick={handleOpen}>Edit</Button>
         <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
         >
         <>
           <Box sx={boxStyle} >
@@ -58,14 +58,37 @@ const EditModal = ({currentPost}: IEditModalProps) =>  {
             <Stack spacing={1}>
               <Typography variant="h5">Edit the post</Typography>
               <FormControl component={'form'} onSubmit={handleEditModalSubmit}>
-                <FormLabel sx={{marginBottom: "5px", marginTop: "15px"}}>Edit the title</FormLabel> 
-                <TextField label="Title" name="title" defaultValue={currentPost.title} variant="filled" color="secondary" 
-                onChange={(e) => setSinglePost((prev: IPost) => ({...prev, title: e.target.value}))} sx={{paddingTop: "5px", paddingBottom: "5px", width: "50%"}}/>
-                <FormLabel sx={{marginBottom: "5px", marginTop: "5px"}}>Edit the description</FormLabel>
-                <TextField label="Description" name="description" defaultValue={currentPost.description} multiline rows={3} variant="filled" color="secondary"  
-                onChange={(e) => setSinglePost((prev: IPost) => ({...prev, description: e.target.value}))} sx={{paddingTop: "5px", paddingBottom: "15px", width: "50%"}}/>
+                <FormLabel sx={{marginBottom: "5px", marginTop: "15px"}}>
+                  Edit the title
+                </FormLabel> 
+                <TextField 
+                  label="Title" 
+                  name="title" 
+                  defaultValue={currentPost.title} 
+                  variant="filled" color="secondary" 
+                  sx={{paddingTop: "5px", paddingBottom: "5px", width: "50%"}}
+                />
+                <FormLabel sx={{marginBottom: "5px", marginTop: "5px"}}>
+                  Edit the description
+                </FormLabel>
+                <TextField 
+                  label="Description" 
+                  name="description" 
+                  defaultValue={currentPost.description} 
+                  multiline 
+                  rows={3} 
+                  variant="filled" 
+                  color="secondary"  
+                  sx={{paddingTop: "5px", paddingBottom: "15px", width: "50%"}}/>
                 <Stack direction="row" spacing={2} sx={{marginTop: "5px"}}>
-                  <Button variant="contained" type="submit" color="primary" sx={{ width: "80px"}}>Save</Button>
+                  <Button 
+                    variant="contained" 
+                    type="submit" 
+                    color="primary" 
+                    sx={{ width: "80px"}}
+                  >
+                    Save
+                  </Button>
                   <Button color="primary" onClick={handleClose}>Close</Button>
                 </Stack>
               </FormControl>
