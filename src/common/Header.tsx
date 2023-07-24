@@ -5,7 +5,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import theme from "../themes/Theme";
 import { useLocation, useNavigate } from "react-router-dom";
 import { StyledAppBar } from "../styled-components/StyledAppBar";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import Clock from "../utils/Clock";
 
 const Header = () => {
