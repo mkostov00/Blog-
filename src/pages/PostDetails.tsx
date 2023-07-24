@@ -10,10 +10,8 @@ const PostDetail = () => {
 
   useEffect(() => {
     const ourPost = posts.find((post) => post.id === Number(postId));
-    console.log(typeof(postId));
     
     setCurrentPost(ourPost);
-
   }, []);
 
   return (
@@ -21,7 +19,6 @@ const PostDetail = () => {
       <h1>{currentPost?.title}</h1>
       <h1>{currentPost?.description}</h1>
       <p>Post ID: {postId}</p>
-      {/* Add more post details here */}
     </div>
   );
 };
