@@ -22,9 +22,6 @@ const EditModal = ({currentPost}: IEditModalProps) =>  {
     const { setSinglePost, posts, setPosts } = useContext(BlogContext)
     const [open, setOpen] = useState(false);
 
-    const handleOpen = (event: any) => setOpen(true)
-    const handleClose = (event: any) => setOpen(false);
-    
     const handleEditModalSubmit = (event: any) => {
         setOpen(false);
         const post = { ...currentPost };
@@ -45,10 +42,17 @@ const EditModal = ({currentPost}: IEditModalProps) =>  {
 
   return (
         <>
-        <Button sx={{ marginLeft: "-15px", marginBottom: "10px", maxWidth: "70px", width: "70px" }} variant="contained" color="primary" onClick={handleOpen}>Edit</Button>
+        <Button 
+          sx={{ marginLeft: "-15px", marginBottom: "10px", maxWidth: "70px", width: "70px" }} 
+          variant="contained" 
+          color="primary" 
+          onClick={() => setOpen(true)}
+        >
+          Edit
+        </Button>
         <Modal
           open={open}
-          onClose={handleClose}
+          onClose={() => setOpen(false)}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
