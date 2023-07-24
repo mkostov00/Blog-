@@ -1,4 +1,4 @@
-import { Box, Button, Container, FormControl, FormLabel, InputLabel, Modal, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, FormControl, FormLabel, Modal, Stack, TextField, Typography } from "@mui/material";
 import { useContext, useState } from "react";
 import { BlogContext, IPost } from "../context/BlogPostProvider";
 
@@ -93,7 +93,7 @@ const EditModal = ({currentPost}: IEditModalProps) =>  {
                   >
                     Save
                   </Button>
-                  <Button color="primary" onClick={handleClose}>Close</Button>
+                  <Button color="primary" onClick={() => setOpen(false)}>Close</Button>
                 </Stack>
               </FormControl>
             </Stack>
