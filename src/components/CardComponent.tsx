@@ -21,11 +21,12 @@ const ImgMediaCard = ({source, currentPost}: ImgMediaCardProps) => {
 
   const [likeCounter, setLikeCounter] = useState<number>(0)
 
-  const backgroundImageStyle = {
-    backgroundImage: currentPost.picture ? `url(${URL.createObjectURL(currentPost.picture)})` : '',
-  };
+    // image is commented because the api i use does not support images
+  // const backgroundImageStyle = {
+  //   backgroundImage: currentPost.picture ? `url(${URL.createObjectURL(currentPost.picture)})` : '',
+  // };
   
-  
+  console.log(currentPost)
 
     const preventPropagation = (event: any) => {
         event.preventDefault()
@@ -53,7 +54,7 @@ const ImgMediaCard = ({source, currentPost}: ImgMediaCardProps) => {
       paddingBottom: "105px",
       width: "15%",
       height: "10%",
-      ...backgroundImageStyle,
+      // ...backgroundImageStyle,
       backgroundSize: 'cover',
       borderRadius: '10px'
     }}>

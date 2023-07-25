@@ -1,14 +1,32 @@
 import { Box, Button, Container, FormControl, FormLabel, List, ListItem, Modal, Stack, TextField, Typography } from "@mui/material";
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
 import ImgMediaCard from "../components/CardComponent";
 import EditModal from "../components/EditModal";
 import { BlogContext, IPost } from "../context/BlogPostProvider";
+import { UseQueryResult, useQuery } from "@tanstack/react-query";
+import { getAllBlogPosts } from "../api/blogPosts";
+
+interface BlogPostData {
+  _id: string;
+  title: string;
+  description: string;
+  picture: string;
+}
 
 const Blog = () => {
   const {posts, setPosts, singlePost, setSinglePost} = useContext(BlogContext)
+  const [isCreatePostModalOpened, setIsCreatePostModalOpened] = useState<boolean>(false)
 
-  const [isCreatePostModalOpenned, setIsCreatePostModalOpenned] = useState<boolean>(false)
+  const blogPostsQuery: UseQueryResult<any, unknown> = useQuery({
+    queryKey: ["blogPosts"],
+    queryFn: getAllBlogPosts,
+    placeholderData: [{ 
+      _id: "1", 
+      title: "initial title", 
+      description: "initial description", 
+      picture: "initial picture" 
+    }]
+  })
 
   const handleChange = (e: any) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -22,7 +40,7 @@ const Blog = () => {
   
   const handleFormSubmit = (e: any) => {
       e.preventDefault()
-      setIsCreatePostModalOpenned(false)
+      setIsCreatePostModalOpened(false)
 
       setSinglePost((prev: IPost) => ({...prev,
         id: prev.id + 1,
@@ -37,12 +55,15 @@ const Blog = () => {
     setPosts(updatedPosts)
   }
 
-  const listItems = posts.map((post) => (
+  if (blogPostsQuery.isLoading) return <h1>Loading...</h1>;
+  if (blogPostsQuery.isError) {
+    return <pre>{JSON.stringify(blogPostsQuery.error)}</pre>;
+  }
+
+  const listItems = blogPostsQuery.data.map((post: any) => (
     <ListItem sx={{marginBottom: "50px", maxWidth:"87%"}}
-      key={post.id}>
-      <Link to={""}>
-        <ImgMediaCard currentPost={post} />
-      </Link>
+      key={post._id}>
+      <ImgMediaCard currentPost={post} />
       <Container sx={{display: "flex", flexDirection: 'column'}}>
         <EditModal currentPost={post} />
         <Button onClick={() => {handleDeletePost(post)}} variant="contained" color="primary" sx={{marginLeft: "-15px", maxWidth: "70px", width: "70px"}}>Delete</Button>
@@ -54,9 +75,9 @@ const Blog = () => {
     <Container>
       <Container sx={{marginTop: "20px", marginLeft: "125px"}}>
         <Typography variant="h4" sx={{marginBottom: "12.5px"}}>Blog Page</Typography>
-        <Button disableRipple color="secondary" variant="outlined" onClick={() => setIsCreatePostModalOpenned(true)}>Add a new Post</Button>
+        <Button disableRipple color="secondary" variant="outlined" onClick={() => setIsCreatePostModalOpened(true)}>Add a new Post</Button>
       </Container>
-      <Modal open={isCreatePostModalOpenned} onClose={() => setIsCreatePostModalOpenned(false)}>
+      <Modal open={isCreatePostModalOpened} onClose={() => setIsCreatePostModalOpened(false)}>
         <Box sx={{
             position: 'absolute',
             top: '15%',
@@ -78,7 +99,7 @@ const Blog = () => {
               <TextField type="file" name="picture" required onChange={handleChange} sx={{marginBottom: "25px"}}/>
               <Stack direction="row" spacing={1} sx={{marginTop: "5px"}}>
                 <Button variant="contained" type="submit" sx={{width: "13vh"}}>Submit</Button>
-                <Button sx={{width: "13vh"}} onClick={() => setIsCreatePostModalOpenned(false)}>Close</Button>
+                <Button sx={{width: "13vh"}} onClick={() => setIsCreatePostModalOpened(false)}>Close</Button>
               </Stack>
             </FormControl>
           </Box>
@@ -87,6 +108,11 @@ const Blog = () => {
         <List>
           {listItems}
         </List>
+        {/* <ol>
+          {blogPostsQuery.data?.map((post: BlogPostData) => (
+            <li key={post._id}>{post.title}</li>
+          ))}
+        </ol> */}
       </Container>
     </Container>
   );
