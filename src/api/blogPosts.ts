@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { IPost } from '../context/BlogPostProvider';
 
 export const getAllBlogPosts = () => {
   return new Promise((resolve, reject) => {
@@ -12,7 +13,7 @@ export const getAllBlogPosts = () => {
   });
 };
 
-export const createBlogPost = ({ title, description, picture }: any) => {
+export const createBlogPost = ({ title, description, picture }: IPost) => {
   return new Promise((resolve, reject) => {
     axios.post("https://crudcrud.com/api/bf736de8ff4f45f9ada9f2acc511000e/blogPosts", {
         title,
@@ -28,9 +29,9 @@ export const createBlogPost = ({ title, description, picture }: any) => {
   });
 };
 
-export const editBlogPost = ({ title, description, id }: any) => {
+export const editBlogPost = ({ title, description, _id }: IPost) => {
   return new Promise((resolve, reject) => {
-    axios.put(`https://crudcrud.com/api/bf736de8ff4f45f9ada9f2acc511000e/blogPosts/${id}`, {
+    axios.put(`https://crudcrud.com/api/bf736de8ff4f45f9ada9f2acc511000e/blogPosts/${_id}`, {
         title,
         description,
       })
