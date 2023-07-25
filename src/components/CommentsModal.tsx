@@ -29,20 +29,12 @@ interface CommentsModalProps{
         event.preventDefault();
 
         setComments((prevComments: IComments[]) => [...prevComments, singleComment]);
-        console.log(singleComment);
 
         setSingleComment({ id: singleComment.id + 1, author: '', comment: '' });
         
     }
 
-    useEffect(() => {
-        console.log(comments);
-        
-
-        
-    }, [comments])
-
-    
+   
   return (
     <Modal 
       open={isOpen}

@@ -26,8 +26,6 @@ const ImgMediaCard = ({source, currentPost}: ImgMediaCardProps) => {
   //   backgroundImage: currentPost.picture ? `url(${URL.createObjectURL(currentPost.picture)})` : '',
   // };
   
-  console.log(currentPost)
-
     const preventPropagation = (event: any) => {
         event.preventDefault()
     }
