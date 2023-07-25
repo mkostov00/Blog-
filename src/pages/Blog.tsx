@@ -1,24 +1,34 @@
 import { Box, Button, Container, FormControl, FormLabel, List, ListItem, Modal, Stack, TextField, Typography } from "@mui/material";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import ImgMediaCard from "../components/CardComponent";
 import EditModal from "../components/EditModal";
-import { BlogContext } from "../context/BlogPostProvider";
-import { UseQueryResult, useQuery } from "@tanstack/react-query";
-import { getAllBlogPosts } from "../api/blogPosts";
+import { UseMutationResult, UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createBlogPost, deleteBlogPost, getAllBlogPosts } from "../api/blogPosts";
 
 const Blog = () => {
-  const {posts, setPosts} = useContext(BlogContext)
   const [isCreatePostModalOpened, setIsCreatePostModalOpened] = useState<boolean>(false)
 
   const blogPostsQuery: UseQueryResult<any, unknown> = useQuery({
     queryKey: ["blogPosts"],
-    queryFn: getAllBlogPosts,
-    placeholderData: [{ 
-      _id: "1", 
-      title: "initial title", 
-      description: "initial description", 
-      picture: "initial picture" 
-    }]
+    queryFn: getAllBlogPosts
+  })
+
+  const queryClient = useQueryClient();
+
+  const createBlogPostMutation: UseMutationResult<unknown, unknown, any, unknown> = useMutation({
+    mutationFn: createBlogPost,
+    onSuccess: (data: any) => {
+      queryClient.setQueryData(["blogPosts", data.id], data);
+      queryClient.invalidateQueries(["blogPosts"], { exact: true });
+    },
+  })
+
+  const deleteBlogPostMutation: UseMutationResult<unknown, unknown, any, unknown> = useMutation({
+    mutationFn: deleteBlogPost,
+    onSuccess: (data: any) => {
+      queryClient.setQueryData(["blogPosts", data.id], data);
+      queryClient.invalidateQueries(["blogPosts"], { exact: true });
+    },
   })
 
   if (blogPostsQuery.isLoading) return <h1>Loading...</h1>;
@@ -28,12 +38,11 @@ const Blog = () => {
   
   const handleFormSubmit = (e: any) => {
     e.preventDefault()
-    setIsCreatePostModalOpened(false)   
-  }
-    
-  const handleDeletePost = (post: any) => {
-    const updatedPosts = posts.filter((prev) => prev.id !== post.id)
-    setPosts(updatedPosts)
+    setIsCreatePostModalOpened(false)
+    createBlogPostMutation.mutate({
+      title: e.currentTarget.title.value,
+      description: e.currentTarget.description.value,
+    }) 
   }
 
   const listItems = blogPostsQuery.data.map((post: any) => (
@@ -42,16 +51,32 @@ const Blog = () => {
       <ImgMediaCard currentPost={post} />
       <Container sx={{display: "flex", flexDirection: 'column'}}>
         <EditModal currentPost={post} />
-        <Button onClick={() => {handleDeletePost(post)}} variant="contained" color="primary" sx={{marginLeft: "-15px", maxWidth: "70px", width: "70px"}}>Delete</Button>
+        <Button 
+          onClick={() => deleteBlogPostMutation.mutate(post._id)} 
+          variant="contained" 
+          color="primary" 
+          sx={{marginLeft: "-15px", maxWidth: "70px", width: "70px"}}
+        >
+          Delete
+        </Button>
       </Container>
     </ListItem>
   ));
 
   return (
     <Container>
+      {createBlogPostMutation.isError && JSON.stringify(createBlogPostMutation.error)}
+      {deleteBlogPostMutation.isError && JSON.stringify(deleteBlogPostMutation.error)}
       <Container sx={{marginTop: "20px", marginLeft: "125px"}}>
         <Typography variant="h4" sx={{marginBottom: "12.5px"}}>Blog Page</Typography>
-        <Button disableRipple color="secondary" variant="outlined" onClick={() => setIsCreatePostModalOpened(true)}>Add a new Post</Button>
+        <Button 
+          disableRipple 
+          color="secondary" 
+          variant="outlined" 
+          onClick={() => setIsCreatePostModalOpened(true)}
+        >
+          Add a new Post
+        </Button>
       </Container>
       <Modal open={isCreatePostModalOpened} onClose={() => setIsCreatePostModalOpened(false)}>
         <Box sx={{
@@ -92,7 +117,14 @@ const Blog = () => {
             <FormLabel sx={{marginBottom: "10px"}}>Insert an image</FormLabel>
             <TextField type="file" name="picture" required sx={{marginBottom: "25px"}}/>
             <Stack direction="row" spacing={1} sx={{marginTop: "5px"}}>
-              <Button variant="contained" type="submit" sx={{width: "13vh"}}>Submit</Button>
+              <Button
+                disabled={createBlogPostMutation.isLoading}
+                variant="contained" 
+                type="submit" 
+                sx={{width: "13vh"}}
+              >
+                {createBlogPostMutation.isLoading ? "Loading..." : "Submit"}
+              </Button>
               <Button 
                 sx={{width: "13vh"}} 
                 onClick={() => setIsCreatePostModalOpened(false)}

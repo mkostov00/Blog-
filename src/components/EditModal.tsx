@@ -1,6 +1,7 @@
 import { Box, Button, FormControl, FormLabel, Modal, Stack, TextField, Typography } from "@mui/material";
-import { useContext, useState } from "react";
-import { BlogContext, IPost } from "../context/BlogPostProvider";
+import { useState } from "react";
+import { UseMutationResult, useMutation, useQueryClient } from "@tanstack/react-query";
+import { editBlogPost } from "../api/blogPosts";
 
 const boxStyle = {
   position: 'absolute',
@@ -15,29 +16,30 @@ const boxStyle = {
 };
 
 interface IEditModalProps{
-  currentPost: IPost
+  currentPost: any
 }
 
 const EditModal = ({currentPost}: IEditModalProps) =>  {
-  const { setSinglePost, posts, setPosts } = useContext(BlogContext)
   const [open, setOpen] = useState(false);
 
-  const handleEditModalSubmit = (event: any) => {
-      setOpen(false);
-      const post = { ...currentPost };
+  const queryClient = useQueryClient();
 
-      post.title = event.target.title.value;
-      post.description = event.target.description.value;
-    
-      const allPosts = posts.map((publication) => {
-        if (publication.id === post.id) {
-          setSinglePost(post)
-          return post
-        }
-        return publication
-      }) 
-      
-      setPosts(allPosts) 
+  const editBlogPostMutation: UseMutationResult<any, any, any, any> = useMutation({
+    mutationFn: editBlogPost,
+    onSuccess: (data: any) => {
+      queryClient.setQueryData(["blogPosts", data.id], data);
+      queryClient.invalidateQueries(["blogPosts"], { exact: true });
+    },
+  })
+
+  const handleEditModalSubmit = (event: any) => {
+    event.preventDefault()
+    setOpen(false);
+    editBlogPostMutation.mutate({
+      title: event.currentTarget.title.value,
+      description: event.currentTarget.description.value,
+      id: currentPost._id
+    });
   }
 
   return (
