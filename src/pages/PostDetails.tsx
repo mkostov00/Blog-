@@ -1,18 +1,16 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { BlogContext, IPost } from "../context/BlogPostProvider";
+import { IPost } from "../context/BlogPostProvider";
 
 const PostDetail = () => {
-  const { posts } = useContext(BlogContext);
-  
   const { postId } = useParams();
   const [currentPost, setCurrentPost] = useState<IPost>();
 
-  useEffect(() => {
-    const ourPost = posts.find((post) => post.id === Number(postId));
+  // useEffect(() => {
+  //   const ourPost = posts.find((post) => post._id === Number(postId));
     
-    setCurrentPost(ourPost);
-  }, []);
+  //   setCurrentPost(ourPost);
+  // }, []);
 
   return (
     <div>

@@ -4,22 +4,21 @@ import { Img } from "../components/Img";
 
 const Home = () => {
   const navigate = useNavigate();
-  const path = process.env.PUBLIC_URL;
   const image = "TheEarthWP.jpeg";
   
   return (
     <>
       <Img 
         alt={"EarthBackground"} 
-        src={path + image} 
+        src={image} 
         sx={{
           position: "absolute",
-          width: "195vh", 
-          height: "47.5vw", 
-          marginLeft: "-10px", 
-          zIndex: "-1", 
-          backgroundRepeat: 'no-repeat', 
-          backgroundSize: 'cover', 
+          width: "195vh",
+          height: "47.5vw",
+          marginLeft: "-10px",
+          zIndex: "-1",
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}></Img>
       <Box>
